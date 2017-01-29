@@ -1,0 +1,15 @@
+framework:
+    test: ~
+    secret: test
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+    profiler:
+        enabled: false
+
+overblog_dataloader:
+    defaults:
+        promise_adapter: "overblog_dataloader.react_promise_adapter"
+    loaders:
+        users:
+            alias: "users_loader"
+            batch_load_fn: "Overblog\\DataLoaderBundle\\Tests\\Functional\\app\\UserDataProvider::getUsersPromise"

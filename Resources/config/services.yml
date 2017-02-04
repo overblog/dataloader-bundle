@@ -1,0 +1,12 @@
+services:
+    overblog_dataloader.cache_map:
+        public: false
+        class: Overblog\DataLoader\CacheMap
+
+    overblog_dataloader.react_promise_adapter:
+        public: false
+        class: Overblog\PromiseAdapter\Adapter\ReactPromiseAdapter
+
+    overblog_dataloader.guzzle_http_promise_adapter:
+        public: false
+        class: Overblog\PromiseAdapter\Adapter\GuzzleHttpPromiseAdapter

@@ -10,3 +10,12 @@ services:
     overblog_dataloader.guzzle_http_promise_adapter:
         public: false
         class: Overblog\PromiseAdapter\Adapter\GuzzleHttpPromiseAdapter
+
+    overblog_dataloader.webonyx_graphql_sync_promise_adapter:
+        public: false
+        class: Overblog\PromiseAdapter\Adapter\WebonyxGraphQLSyncPromiseAdapter
+        arguments:
+            - "@webonyx_graphql.sync_promise_adapter"
+
+    webonyx_graphql.sync_promise_adapter:
+        class: Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter

@@ -24,7 +24,7 @@
     },
     "require": {
         "php": "^5.5|^7.0",
-        "overblog/dataloader-php": "^0.3.0",
+        "overblog/dataloader-php": "^0.4.0",
         "symfony/framework-bundle": "^2.7|^3.1"
     },
     "require-dev": {
@@ -35,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.1-dev"
+            "dev-master": "0.2-dev"
         }
     }
 }

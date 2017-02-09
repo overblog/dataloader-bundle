@@ -17,7 +17,7 @@ This library requires PHP >= 5.5 to work.
 ### Download the Bundle
 
 ```
-composer require ovenblog/dataloader-bundle
+composer require overblog/dataloader-bundle
 ```
 
 ### Enable the Bundle
@@ -78,6 +78,12 @@ This example will create 3 loaders as services:
 - "@overblog_dataloader.users_loader" with alias "@users_dataloader"
 - "@overblog_dataloader.posts_loader"
 - "@overblog_dataloader.images_loader" create using custom factory function "my_factory"
+
+Here the list of existing promise adapters:
+
+* **[ReactPhp/Promise](https://github.com/reactphp/promise)**: overblog_dataloader.react_promise_adapter
+* **[GuzzleHttp/Promises](https://github.com/guzzle/promises)**: overblog_dataloader.guzzle_promise_adapter
+* **[Webonyx/GraphQL-PHP](https://github.com/webonyx/graphql-php) Sync Promise**: overblog_dataloader.webonyx_graphql_sync_promise_adapter
 
 ## License
 

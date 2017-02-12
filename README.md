@@ -30,7 +30,7 @@ class AppKernel extends Kernel
         $bundles = [
             // ...
 
-            new Overblog\DataLoaderBundle\DataLoaderBundle(),
+            new Overblog\DataLoaderBundle\OverblogDataLoaderBundle(),
         ];
 
         // ...

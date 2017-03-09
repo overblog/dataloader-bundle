@@ -49,7 +49,7 @@ overblog_dataloader:
     defaults:
         # required
         promise_adapter: "overblog_dataloader.react_promise_adapter"
-        # optionnal
+        # optional
         factory: ~
         options:
             batch: true

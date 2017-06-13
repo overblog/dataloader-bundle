@@ -82,7 +82,7 @@ This example will create 3 loaders as services:
 Here the list of existing promise adapters:
 
 * **[ReactPhp/Promise](https://github.com/reactphp/promise)**: overblog_dataloader.react_promise_adapter
-* **[GuzzleHttp/Promises](https://github.com/guzzle/promises)**: overblog_dataloader.guzzle_promise_adapter
+* **[GuzzleHttp/Promises](https://github.com/guzzle/promises)**: overblog_dataloader.guzzle_http_promise_adapter
 * **[Webonyx/GraphQL-PHP](https://github.com/webonyx/graphql-php) Sync Promise**: overblog_dataloader.webonyx_graphql_sync_promise_adapter
 
 ## Combine with GraphQLBundle

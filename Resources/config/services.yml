@@ -1,5 +1,6 @@
 services:
     overblog_dataloader.cache_map:
+        shared: false
         public: false
         class: Overblog\DataLoader\CacheMap
 

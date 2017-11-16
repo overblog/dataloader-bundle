@@ -12,11 +12,12 @@
 namespace Overblog\DataLoaderBundle\Tests\DependencyInjection;
 
 use Overblog\DataLoaderBundle\DependencyInjection\OverblogDataLoaderExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class OverblogDataLoaderExtensionTest extends \PHPUnit_Framework_TestCase
+class OverblogDataLoaderExtensionTest extends TestCase
 {
     /**
      * @var ContainerBuilder
@@ -193,7 +194,7 @@ class OverblogDataLoaderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedArguments, $testDataLoaderDefinition->getArguments());
 
         if ($alias) {
-            $this->assertEquals(new Alias($serviceID), $this->container->getAlias($alias));
+            $this->assertEquals(new Alias($serviceID, true), $this->container->getAlias($alias));
         }
     }
 

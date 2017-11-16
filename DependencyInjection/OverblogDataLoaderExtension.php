@@ -52,6 +52,7 @@ class OverblogDataLoaderExtension extends Extension
 
             if (isset($loaderConfig['alias'])) {
                 $container->setAlias($loaderConfig['alias'], $dataLoaderServiceID);
+                $container->getAlias($loaderConfig['alias'])->setPublic(true);
             }
         }
     }

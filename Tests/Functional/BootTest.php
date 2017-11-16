@@ -13,9 +13,11 @@ namespace Overblog\DataLoaderBundle\Tests\Functional;
 
 class BootTest extends TestCase
 {
-    public function testBoot()
+    public function testBootAppKernel()
     {
         $kernel = $this->createKernel();
         $kernel->boot();
+
+        $this->assertTrue($kernel->isBooted());
     }
 }

@@ -163,9 +163,9 @@ class ShipLoader
 * Usage in a resolver
 
 ```php
-    public function resolveShip($shipsID)
+    public function resolveShip($shipID)
     {
-        $promise = $this->container->get('ships_loader')->load($shipsID);
+        $promise = $this->container->get('ships_loader')->load($shipID);
 
         return $promise;
     }

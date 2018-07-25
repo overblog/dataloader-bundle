@@ -16,7 +16,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const SERVICE_CALLABLE_NOTATION_REGEX = '/^@(?<service_id>[a-z0-9\._]+)(?:\:(?<method>[a-zA-Z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/i';
+    const SERVICE_CALLABLE_NOTATION_REGEX = '/^@(?<service_id>[a-z0-9\._\\\]+)(?:\:(?<method>[a-zA-Z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/iu';
     const PHP_CALLABLE_NOTATION_REGEX = '/^(?<function>(?:\\\\?[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*)+)(?:\:\:(?<method>[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/i';
 
     public function getConfigTreeBuilder()

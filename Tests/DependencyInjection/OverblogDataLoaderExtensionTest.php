@@ -50,7 +50,8 @@ class OverblogDataLoaderExtensionTest extends TestCase
         }
     }
 
-    public function testValidPhpCallableNodeValue() {
+    public function testValidPhpCallableNodeValue()
+    {
         $validValues = ['Image\\Loader::get', 'Post::getPosts'];
         foreach ($validValues as $validValue) {
             $this->assertRegExp(Configuration::PHP_CALLABLE_NOTATION_REGEX, $validValue);

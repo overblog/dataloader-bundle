@@ -11,6 +11,7 @@
 
 namespace Overblog\DataLoaderBundle\Tests\DependencyInjection;
 
+use Overblog\DataLoaderBundle\DependencyInjection\Configuration;
 use Overblog\DataLoaderBundle\DependencyInjection\OverblogDataLoaderExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Alias;
@@ -39,6 +40,21 @@ class OverblogDataLoaderExtensionTest extends TestCase
     public function tearDown()
     {
         unset($this->container, $this->extension);
+    }
+
+    public function testValidServiceCallableNodeValue()
+    {
+        $validValues = ['@app.user:getUsers', '@App\\Loader\\User:all'];
+        foreach ($validValues as $validValue) {
+            $this->assertRegExp(Configuration::SERVICE_CALLABLE_NOTATION_REGEX, $validValue);
+        }
+    }
+
+    public function testValidPhpCallableNodeValue() {
+        $validValues = ['Image\\Loader::get', 'Post::getPosts'];
+        foreach ($validValues as $validValue) {
+            $this->assertRegExp(Configuration::PHP_CALLABLE_NOTATION_REGEX, $validValue);
+        }
     }
 
     public function testUsersDataLoaderConfig()

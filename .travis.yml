@@ -44,6 +44,9 @@ before_install:
     - if [[ ${TEST_COVERAGE} != true ]]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
     - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
+    # disable default memory limit
+    - export INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    - echo memory_limit = -1 >> $INI
 
 install: travis_retry composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
 

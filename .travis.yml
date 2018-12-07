@@ -40,8 +40,8 @@ cache:
         - $HOME/.php_cs.cache
 
 before_install:
-    - if [ ${DEPENDENCIES} = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
-    - if [[ ${TEST_COVERAGE} != true ]]; then phpenv config-rm xdebug.ini || true; fi
+    - if [ "${DEPENDENCIES}" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
+    - if [[ "${TEST_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
     - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
     # disable default memory limit
@@ -51,8 +51,8 @@ before_install:
 install: travis_retry composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
 
 script:
-    - bin/phpunit --debug $( if [ $TEST_COVERAGE = true ]; then echo "-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"; fi; )
-    - if [ ${PHP_CS_FIXER} = true ]; then composer require "friendsofphp/php-cs-fixer:^2.0" && bin/php-cs-fixer fix --diff --dry-run -v; fi;
+    - bin/phpunit --debug $( if [ "$TEST_COVERAGE" = "true" ]; then echo "-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"; fi; )
+    - if [ "${PHP_CS_FIXER}" = "true" ]; then composer require "friendsofphp/php-cs-fixer:^2.0" && bin/php-cs-fixer fix --diff --dry-run -v; fi;
 
 after_script:
-    - if [ ${TEST_COVERAGE} = true ]; then composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v; fi
+    - if [ "${TEST_COVERAGE}" = "true" ]; then composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v; fi

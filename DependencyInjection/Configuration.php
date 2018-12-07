@@ -11,6 +11,7 @@
 
 namespace Overblog\DataLoaderBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -21,10 +22,13 @@ class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('overblog_dataloader');
+        $treeBuilder = new TreeBuilder('overblog_dataloader');
+
+        // BC layer for symfony/config 4.1 and older
+        $rootNode = self::getRootNodeWithoutDeprecation($treeBuilder, 'overblog_dataloader');
         $rootNode
             ->children()
+                ->scalarNode('factory')->end()
                 ->arrayNode('defaults')
                     ->isRequired()
                     ->addDefaultsIfNotSet()
@@ -61,8 +65,8 @@ class Configuration implements ConfigurationInterface
 
     private function addOptionsSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('options');
+        $builder = new TreeBuilder('options');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'options');
         $node
             ->children()
                 ->booleanNode('batch')->defaultTrue()->end()
@@ -77,8 +81,8 @@ class Configuration implements ConfigurationInterface
 
     private function addCallableSection($name)
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root($name, 'scalar');
+        $builder = new TreeBuilder($name, 'scalar');
+        $node = self::getRootNodeWithoutDeprecation($builder, $name, 'scalar');
 
         $node
             ->validate()
@@ -98,5 +102,20 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $node;
+    }
+
+    /**
+     * @internal
+     *
+     * @param TreeBuilder $builder
+     * @param string|null $name
+     * @param string      $type
+     *
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, $name, $type = 'array')
+    {
+        // BC layer for symfony/config 4.1 and older
+        return \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, $type);
     }
 }

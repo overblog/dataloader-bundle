@@ -90,85 +90,197 @@ Here the list of existing promise adapters:
 This bundle can be use with [GraphQLBundle](https://github.com/overblog/GraphQLBundle).
 Here an example:
 
-* Bundle config
+* First create your service. We will use the Webonyx promise adapter
 
 ```yaml
-#graphql
-overblog_graphql:
-    definitions:
-        schema:
-            query: Query
-    services:
-        promise_adapter: "webonyx_graphql.sync_promise_adapter"
+#config/services.yaml
+services:
+    graphql_promise_adapter:
+        class: Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter
+        public: true
+        
+    
+    ###
+    # Force the overblog promise adapter to use the webonyx adapter
+    ###
+    Overblog\PromiseAdapter\PromiseAdapterInterface:
+        class: Overblog\PromiseAdapter\Adapter\WebonyxGraphQLSyncPromiseAdapter
+        arguments:
+            - "@graphql_promise_adapter"
+    
+    ###
+    # Add magic configuration to load all your dataLoader
+    ###
+    App\Loader\:
+        resource: "../src/Loader/*"
+```
 
-#dataloader
+* Now configure the packages
+
+```yaml
+#config/packages/graphql.yaml
+overblog_graphql:
+    #[...]
+    services:
+        promise_adapter: "graphql_promise_adapter"
+
+#config/packages/dataloader.yaml
 overblog_dataloader:
     defaults:
-        promise_adapter: "overblog_dataloader.webonyx_graphql_sync_promise_adapter"
-    loaders:
-        ships:
-            alias: "ships_loader"
-            batch_load_fn: "@app.graph.ships_loader:all"
+        promise_adapter: "graphql_promise_adapter"
 ```
 
-* Batch loader function
-
-```yaml
-services:
-    app.graph.ship_repository:
-        class: AppBundle\Entity\Repository\ShipRepository
-        factory: ["@doctrine.orm.entity_manager", getRepository]
-        arguments:
-            - AppBundle\Entity\Ship
-
-    app.graph.ships_loader:
-        class: AppBundle\GraphQL\Loader\ShipLoader
-        arguments:
-            - "@overblog_graphql.promise_adapter"
-            - "@app.graph.ship_repository"
-```
+* Create an abstract class GenericDataLoader
 
 ```php
 <?php
 
-namespace AppBundle\GraphQL\Loader;
+namespace App\Loader;
 
-use AppBundle\Entity\Repository\ShipRepository;
-use GraphQL\Executor\Promise\PromiseAdapter;
+use Overblog\DataLoader\DataLoader;
+use Overblog\PromiseAdapter\PromiseAdapterInterface;
 
-class ShipLoader
+abstract class AbstractDataLoader extends DataLoader
 {
-    private $promiseAdapter;
-
-    private $repository;
-
-    public function __construct(PromiseAdapter $promiseAdapter, ShipRepository $repository)
-    {
-        $this->promiseAdapter = $promiseAdapter;
-        $this->repository = $repository;
+    /**
+     * @param PromiseAdapterInterface $promiseAdapter
+     */
+    public function __construct(PromiseAdapterInterface $promiseAdapter) {
+        parent::__construct(
+            function ($ids) use ($promiseAdapter) {
+                return $promiseAdapter->createAll($this->find($ids));
+            },
+            $promiseAdapter
+        );
     }
 
-    public function all(array $shipsIDs)
-    {
-        $qb = $this->repository->createQueryBuilder('s');
-        $qb->add('where', $qb->expr()->in('s.id', ':ids'));
-        $qb->setParameter('ids', $shipsIDs);
-        $ships = $qb->getQuery()->getResult();
-
-        return $this->promiseAdapter->all($ships);
-    }
+    /**
+     * @param array $ids
+     *
+     * @return array
+     */
+    abstract protected function find(array $ids): array;
 }
 ```
+
+* Now create a DataLoader for all your entities. For example user
+
+```php
+<?php
+
+namespace App\Loader;
+
+use App\Repository\UserRepository;
+use Overblog\PromiseAdapter\PromiseAdapterInterface;
+
+class UserDataLoader extends AbstractDataLoader
+{
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * @param UserRepository $userRepository
+     * @param PromiseAdapterInterface $promiseAdapter
+     */
+    public function __construct(
+        UserRepository $userRepository,
+        PromiseAdapterInterface $promiseAdapter
+    ) {
+        parent::__construct($promiseAdapter);
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function find(array $ids): array
+    {
+        return $this->userRepository->findById($ids);
+    }
+}
+``` 
 
 * Usage in a resolver
 
 ```php
-    public function resolveShip($shipID)
-    {
-        $promise = $this->container->get('ships_loader')->load($shipID);
+<?php
 
-        return $promise;
+namespace App\Resolver;
+
+use App\Entity\User;
+use App\Loader\UserDataLoader;
+use App\Repository\UserRepository;
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+
+final class UserResolver implements ResolverInterface, AliasedInterface
+{
+    /**
+     * @var UserDataLoader
+     */
+    private $userDataLoader;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * @param UserDataLoader $userDataLoader
+     * @param UserRepository $userRepository
+     */
+    public function __construct(
+        UserDataLoader $userDataLoader,
+        UserRepository $userRepository
+    ) {
+        $this->userDataLoader = $userDataLoader;
+        $this->userRepository = $userRepository;
     }
+
+    /**
+     * @param int $id
+     *
+     * @return User
+     */
+    public function resolveEntity(int $id)
+    {
+        return $this->userDataLoader->load($id);
+    }
+
+    /**
+     * @param Argument $args
+     *
+     * @return object|\Overblog\GraphQLBundle\Relay\Connection\Output\Connection
+     * @throws \Exception
+     */
+    public function resolveList(Argument $args)
+    {
+        $paginator = new Paginator(function ($offset, $limit) {
+            $ids = $this->userRepository->paginatedUsersIds($offset, $limit);
+
+            return $this->userDataLoader->loadMany($ids);
+        }, Paginator::MODE_PROMISE);
+
+        return $paginator->auto($args, function() {
+            return $this->userRepository->count([]);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getAliases(): array
+    {
+        return [
+            'resolveEntity' => 'User',
+            'resolveList' => 'Users',
+        ];
+    }
+}
 ```
 
 This is an example using the sync promise adapter of Webonyx.

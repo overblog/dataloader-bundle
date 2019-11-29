@@ -14,22 +14,16 @@ branches:
 matrix:
     fast_finish: true
     include:
-        - php: 5.5
-          env: SYMFONY_VERSION=2.7.*
-        - php: 5.5
-          env: SYMFONY_VERSION=2.8.*
-        - php: 5.6
-          env: SYMFONY_VERSION=3.1.*
-        - php: 7.0
-          env: PHP_CS_FIXER=true
-        - php: 7.1
-          env: SYMFONY_VERSION=3.4.*
         - php: 7.2
-          env: SYMFONY_VERSION=3.2.* TEST_COVERAGE=true
-        - php: 7.3
-          env: SYMFONY_VERSION=4.1.*
+          env: SYMFONY_VERSION=4.1.* TEST_COVERAGE=true
         - php: 7.3
           env: SYMFONY_VERSION=4.2.*
+        - php: 7.3
+          env: SYMFONY_VERSION=4.3.*
+        - php: 7.3
+          env: SYMFONY_VERSION=4.4.*
+        - php: 7.4
+          env: SYMFONY_VERSION=5.0.*
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:

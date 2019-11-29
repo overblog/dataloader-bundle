@@ -37,7 +37,7 @@ before_install:
     - if [ "${DEPENDENCIES}" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
     - if [[ "${TEST_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
-    - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
+    - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
     # disable default memory limit
     - export INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - echo memory_limit = -1 >> $INI

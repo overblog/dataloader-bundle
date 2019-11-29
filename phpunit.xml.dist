@@ -29,7 +29,8 @@
     </filter>
 
     <php>
-        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="error_reporting" value="-1"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="999999" />
     </php>
 
 </phpunit>

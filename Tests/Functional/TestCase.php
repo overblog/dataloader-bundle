@@ -20,16 +20,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 abstract class TestCase extends WebTestCase
 {
-    /**
-     * @var AppKernel[]
-     */
-    private static $kernels = [];
-
     protected static function getKernelClass()
     {
-        require_once __DIR__.'/app/AppKernel.php';
-
-        return 'Overblog\DataLoaderBundle\Tests\Functional\app\AppKernel';
+        return AppKernel::class;
     }
 
     /**
@@ -56,14 +49,6 @@ abstract class TestCase extends WebTestCase
     {
         $fs = new Filesystem();
         $fs->remove(sys_get_temp_dir().'/OverblogDataLoaderBundle/');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        static::$kernel = null;
     }
 
     protected static function getContainer()

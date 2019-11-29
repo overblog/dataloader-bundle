@@ -14,22 +14,16 @@ branches:
 matrix:
     fast_finish: true
     include:
-        - php: 5.5
-          env: SYMFONY_VERSION=2.7.*
-        - php: 5.5
-          env: SYMFONY_VERSION=2.8.*
-        - php: 5.6
-          env: SYMFONY_VERSION=3.1.*
-        - php: 7.0
-          env: PHP_CS_FIXER=true
-        - php: 7.1
-          env: SYMFONY_VERSION=3.4.*
         - php: 7.2
-          env: SYMFONY_VERSION=3.2.* TEST_COVERAGE=true
-        - php: 7.3
-          env: SYMFONY_VERSION=4.1.*
+          env: SYMFONY_VERSION=4.1.* TEST_COVERAGE=true
         - php: 7.3
           env: SYMFONY_VERSION=4.2.*
+        - php: 7.3
+          env: SYMFONY_VERSION=4.3.*
+        - php: 7.3
+          env: SYMFONY_VERSION=4.4.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.4snapshot
+          env: SYMFONY_VERSION=5.0.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
@@ -43,7 +37,7 @@ before_install:
     - if [ "${DEPENDENCIES}" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
     - if [[ "${TEST_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
-    - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
+    - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
     # disable default memory limit
     - export INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - echo memory_limit = -1 >> $INI

@@ -13,10 +13,11 @@ namespace Overblog\DataLoaderBundle\Tests\Functional;
 
 use Overblog\DataLoader\DataLoader;
 use Overblog\DataLoaderBundle\Tests\Functional\app\UserDataProvider;
+use function React\Promise\all;
 
 class UserLoaderTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +30,7 @@ class UserLoaderTest extends TestCase
         /** @var DataLoader $userLoader */
         $userLoader = static::$kernel->getContainer()->get('users_loader');
 
-        $promise = \React\Promise\all([
+        $promise = all([
             $userLoader->load(3),
             $userLoader->load(5),
             $userLoader->loadMany([5, 2, 4]),

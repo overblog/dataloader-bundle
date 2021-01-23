@@ -14,6 +14,7 @@ namespace Overblog\DataLoaderBundle\Tests\DependencyInjection;
 use Overblog\DataLoaderBundle\DependencyInjection\Configuration;
 use Overblog\DataLoaderBundle\DependencyInjection\OverblogDataLoaderExtension;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -29,7 +30,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
      */
     private $extension;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->container = new ContainerBuilder();
         $this->container->setParameter('kernel.bundles', []);
@@ -37,7 +38,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
         $this->extension = new OverblogDataLoaderExtension();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->container, $this->extension);
     }
@@ -148,12 +149,11 @@ class OverblogDataLoaderExtensionTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Invalid configuration for path "overblog_dataloader.loaders.users.batch_load_fn": "this is not a callable" doesn't seem to be a valid callable.
-     */
     public function testBatchLoadFnNotCallable()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Invalid configuration for path "overblog_dataloader.loaders.users.batch_load_fn": "this is not a callable" doesn\'t seem to be a valid callable.');
+
         $this->extension->load(
             [
                 [

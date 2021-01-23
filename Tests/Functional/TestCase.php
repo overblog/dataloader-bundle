@@ -45,7 +45,7 @@ abstract class TestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $fs = new Filesystem();
         $fs->remove(sys_get_temp_dir().'/OverblogDataLoaderBundle/');

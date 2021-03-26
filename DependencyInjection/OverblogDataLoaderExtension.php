@@ -39,6 +39,7 @@ class OverblogDataLoaderExtension extends Extension
 
             $definition = $container->register($dataLoaderServiceID, 'Overblog\\DataLoader\\DataLoader')
                 ->setPublic(true)
+                ->addTag('kernel.reset', ['method' => 'clearAll'])
                 ->setArguments([
                     $batchLoadFn,
                     new Reference($loaderConfig['promise_adapter']),

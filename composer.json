@@ -27,14 +27,14 @@
     "require": {
         "php": "^8.0",
         "overblog/dataloader-php": "^0.7.0",
-        "symfony/dependency-injection": "^5.3 || ^6.0"
+        "symfony/dependency-injection": "^5.3.7 || ^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5.10",
-        "react/promise": "^2.5",
+        "react/promise": "^2.8.0",
         "sensio/framework-extra-bundle": "^6.2",
         "symfony/phpunit-bridge": "^6.0",
-        "symfony/yaml": "^5.3 || ^6.0"
+        "symfony/yaml": "^5.3.7 || ^6.0"
     },
     "extra": {
         "branch-alias": {
@@ -43,9 +43,6 @@
     },
   "scripts": {
       "test": "bin/phpunit --color=always --coverage-clover=build/logs/clover.xml",
-      "static-analysis": [
-          "phpstan analyse --ansi --memory-limit=1G"
-      ],
       "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.18.7/php-cs-fixer.phar -O php-cs-fixer.phar",
       "fix-cs": [
           "@install-cs",
@@ -58,7 +55,6 @@
       "code-quality": [
           "rm composer.lock",
           "@composer install --ansi",
-          "@static-analysis",
           "@check-cs"
       ]
   }

@@ -63,7 +63,7 @@ final class OverblogDataLoaderExtension extends Extension
         return 'overblog_dataloader';
     }
 
-    private function generateDataLoaderServiceIDFromName($name, ContainerBuilder $container) : string
+    private function generateDataLoaderServiceIDFromName($name, ContainerBuilder $container): string
     {
         return sprintf('%s.%s_loader', $this->getAlias(), $container->underscore($name));
     }
@@ -73,7 +73,7 @@ final class OverblogDataLoaderExtension extends Extension
         return sprintf('%s_option', $this->generateDataLoaderServiceIDFromName($name, $container));
     }
 
-    private function buildOptionsParams(array $options) : array
+    private function buildOptionsParams(array $options): array
     {
         $optionsParams = [];
 
@@ -90,7 +90,7 @@ final class OverblogDataLoaderExtension extends Extension
     {
         $matches = null;
 
-        if ($scalar === null) {
+        if (null === $scalar) {
             return null;
         }
 

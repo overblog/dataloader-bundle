@@ -19,6 +19,6 @@ final class OverblogDataLoaderBundle extends Bundle
 {
     public function getContainerExtension(): ?ExtensionInterface
     {
-        return new OverblogDataLoaderExtension;
+        return new OverblogDataLoaderExtension();
     }
 }

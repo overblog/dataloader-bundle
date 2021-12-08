@@ -11,8 +11,8 @@
 
 namespace Overblog\DataLoaderBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -45,7 +45,7 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('alias')
                                 ->validate()
                                     ->ifTrue(function ($alias) {
-                                        return $alias !== null && !preg_match('/[a-z0-9_\.]+/i', $alias);
+                                        return null !== $alias && !preg_match('/[a-z0-9_\.]+/i', $alias);
                                     })
                                         ->thenInvalid('%s is not a valid service alias.')
                                     ->end()
@@ -62,7 +62,7 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function addOptionsSection() : NodeDefinition
+    private function addOptionsSection(): NodeDefinition
     {
         $builder = new TreeBuilder('options');
 
@@ -80,7 +80,7 @@ final class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function addCallableSection($name) : NodeDefinition
+    private function addCallableSection($name): NodeDefinition
     {
         $builder = new TreeBuilder($name, 'scalar');
 
@@ -89,7 +89,7 @@ final class Configuration implements ConfigurationInterface
         $node
             ->validate()
                 ->ifTrue(function ($batchLoadFn) {
-                    if ($batchLoadFn === null) {
+                    if (null === $batchLoadFn) {
                         return false;
                     }
 
@@ -113,7 +113,6 @@ final class Configuration implements ConfigurationInterface
     /**
      * @internal
      *
-     * @param TreeBuilder $builder
      * @param string|null $name
      * @param string      $type
      *

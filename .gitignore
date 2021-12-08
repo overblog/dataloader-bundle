@@ -5,4 +5,5 @@ phpunit.xml
 composer.lock
 composer.phar
 .php_cs.cache
+/*.phar
 /.phpunit.result.cache

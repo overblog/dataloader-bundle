@@ -30,7 +30,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
      */
     private $extension;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->container = new ContainerBuilder();
         $this->container->setParameter('kernel.bundles', []);
@@ -38,7 +38,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
         $this->extension = new OverblogDataLoaderExtension();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->container, $this->extension);
     }

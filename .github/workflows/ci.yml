@@ -68,7 +68,7 @@ jobs:
                   SYMFONY_REQUIRE: "${{ matrix.symfony-version }}"
 
             - name: "Run tests"
-              run: bin/phpunit
+              run: composer test
 
             - name: "Upload coverage results to Coveralls"
               if: "matrix.coverage == 'pcov'"

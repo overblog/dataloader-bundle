@@ -24,7 +24,7 @@ class AppKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function registerBundles()
+    public function registerBundles(): array
     {
         return [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
@@ -32,12 +32,12 @@ class AppKernel extends Kernel
         ];
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir().'/OverblogDataLoaderBundle/'.Kernel::VERSION.'/cache/'.$this->environment;
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return sys_get_temp_dir().'/OverblogDataLoaderBundle/'.Kernel::VERSION.'/logs';
     }
@@ -57,6 +57,6 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__.'/config/config.yml');
+        $loader->load(__DIR__.'/config/config.yaml');
     }
 }

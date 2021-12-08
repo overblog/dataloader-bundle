@@ -11,22 +11,21 @@
 
 namespace Overblog\DataLoaderBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
-    const SERVICE_CALLABLE_NOTATION_REGEX = '/^@(?<service_id>[a-z0-9\._\\\]+)(?:\:(?<method>[a-zA-Z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/iu';
-    const PHP_CALLABLE_NOTATION_REGEX = '/^(?<function>(?:\\\\?[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*)+)(?:\:\:(?<method>[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/i';
+    public const SERVICE_CALLABLE_NOTATION_REGEX = '/^@(?<service_id>[a-z0-9\._\\\]+)(?:\:(?<method>[a-zA-Z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/iu';
+    public const PHP_CALLABLE_NOTATION_REGEX = '/^(?<function>(?:\\\\?[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*)+)(?:\:\:(?<method>[a-z_\x7f-\xff][a-z0-9_\x7f-\xff]*))?$/i';
 
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('overblog_dataloader');
-
-        // BC layer for symfony/config 4.1 and older
-        $rootNode = self::getRootNodeWithoutDeprecation($treeBuilder, 'overblog_dataloader');
-        $rootNode
+        $treeBuilder
+            ->getRootNode()
             ->children()
                 ->scalarNode('factory')->end()
                 ->arrayNode('defaults')
@@ -46,7 +45,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('alias')
                                 ->validate()
                                     ->ifTrue(function ($alias) {
-                                        return !preg_match('/[a-z0-9_\.]+/i', $alias);
+                                        return $alias !== null && !preg_match('/[a-z0-9_\.]+/i', $alias);
                                     })
                                         ->thenInvalid('%s is not a valid service alias.')
                                     ->end()
@@ -63,10 +62,12 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function addOptionsSection()
+    private function addOptionsSection() : NodeDefinition
     {
         $builder = new TreeBuilder('options');
-        $node = self::getRootNodeWithoutDeprecation($builder, 'options');
+
+        $node = $builder->getRootNode();
+
         $node
             ->children()
                 ->booleanNode('batch')->defaultTrue()->end()
@@ -79,14 +80,19 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function addCallableSection($name)
+    private function addCallableSection($name) : NodeDefinition
     {
         $builder = new TreeBuilder($name, 'scalar');
-        $node = self::getRootNodeWithoutDeprecation($builder, $name, 'scalar');
+
+        $node = $builder->getRootNode();
 
         $node
             ->validate()
                 ->ifTrue(function ($batchLoadFn) {
+                    if ($batchLoadFn === null) {
+                        return false;
+                    }
+
                     if (preg_match(self::SERVICE_CALLABLE_NOTATION_REGEX, $batchLoadFn)) {
                         return false;
                     }

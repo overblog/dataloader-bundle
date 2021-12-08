@@ -17,12 +17,12 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class OverblogDataLoaderExtension extends Extension
+final class OverblogDataLoaderExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
@@ -58,22 +58,22 @@ class OverblogDataLoaderExtension extends Extension
         }
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'overblog_dataloader';
     }
 
-    private function generateDataLoaderServiceIDFromName($name, ContainerBuilder $container)
+    private function generateDataLoaderServiceIDFromName($name, ContainerBuilder $container) : string
     {
         return sprintf('%s.%s_loader', $this->getAlias(), $container->underscore($name));
     }
 
-    private function generateDataLoaderOptionServiceIDFromName($name, ContainerBuilder $container)
+    private function generateDataLoaderOptionServiceIDFromName($name, ContainerBuilder $container): string
     {
         return sprintf('%s_option', $this->generateDataLoaderServiceIDFromName($name, $container));
     }
 
-    private function buildOptionsParams(array $options)
+    private function buildOptionsParams(array $options) : array
     {
         $optionsParams = [];
 
@@ -86,9 +86,13 @@ class OverblogDataLoaderExtension extends Extension
         return $optionsParams;
     }
 
-    private function buildCallableFromScalar($scalar)
+    private function buildCallableFromScalar($scalar): mixed
     {
         $matches = null;
+
+        if ($scalar === null) {
+            return null;
+        }
 
         if (preg_match(Configuration::SERVICE_CALLABLE_NOTATION_REGEX, $scalar, $matches)) {
             $function = new Reference($matches['service_id']);

@@ -15,14 +15,10 @@ use Overblog\DataLoaderBundle\DependencyInjection\OverblogDataLoaderExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class OverblogDataLoaderBundle extends Bundle
+final class OverblogDataLoaderBundle extends Bundle
 {
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
-        if (!$this->extension instanceof ExtensionInterface) {
-            $this->extension = new OverblogDataLoaderExtension();
-        }
-
-        return $this->extension;
+        return new OverblogDataLoaderExtension;
     }
 }

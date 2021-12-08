@@ -47,7 +47,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
     {
         $validValues = ['@app.user:getUsers', '@App\\Loader\\User:all'];
         foreach ($validValues as $validValue) {
-            $this->assertRegExp(Configuration::SERVICE_CALLABLE_NOTATION_REGEX, $validValue);
+            $this->assertMatchesRegularExpression(Configuration::SERVICE_CALLABLE_NOTATION_REGEX, $validValue);
         }
     }
 
@@ -55,7 +55,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
     {
         $validValues = ['Image\\Loader::get', 'Post::getPosts'];
         foreach ($validValues as $validValue) {
-            $this->assertRegExp(Configuration::PHP_CALLABLE_NOTATION_REGEX, $validValue);
+            $this->assertMatchesRegularExpression(Configuration::PHP_CALLABLE_NOTATION_REGEX, $validValue);
         }
     }
 
@@ -152,7 +152,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
     public function testBatchLoadFnNotCallable()
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid configuration for path "overblog_dataloader.loaders.users.batch_load_fn": "this is not a callable" doesn\'t seem to be a valid callable.');
+        $this->expectExceptionMessage("\"NOT CALLABLE\" doesn't seem to be a valid callable.");
 
         $this->extension->load(
             [
@@ -162,7 +162,7 @@ class OverblogDataLoaderExtensionTest extends TestCase
                     ],
                     'loaders' => [
                         'users' => [
-                            'batch_load_fn' => 'this is not a callable',
+                            'batch_load_fn' => 'NOT CALLABLE',
                         ],
                     ],
                 ],

@@ -13,22 +13,26 @@ namespace Overblog\DataLoaderBundle\Tests\Functional;
 
 use Overblog\DataLoaderBundle\Tests\Functional\app\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * TestCase.
  */
 abstract class TestCase extends WebTestCase
 {
-    protected static function getKernelClass()
+    protected static function getKernelClass(): string
     {
+        require_once __DIR__.'/app/AppKernel.php';
+
         return AppKernel::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected static function createKernel(array $options = [])
+    protected static function createKernel(array $options = []): KernelInterface
     {
         if (null === static::$class) {
             static::$class = static::getKernelClass();
@@ -36,7 +40,7 @@ abstract class TestCase extends WebTestCase
 
         $options['test_case'] = isset($options['test_case']) ? $options['test_case'] : null;
 
-        $env = isset($options['environment']) ? $options['environment'] : 'test'.strtolower($options['test_case']);
+        $env = isset($options['environment']) ? $options['environment'] : 'test'.strtolower($options['test_case'] ?? '');
         $debug = isset($options['debug']) ? $options['debug'] : true;
 
         return new static::$class($env, $debug, $options['test_case']);
@@ -51,7 +55,7 @@ abstract class TestCase extends WebTestCase
         $fs->remove(sys_get_temp_dir().'/OverblogDataLoaderBundle/');
     }
 
-    protected static function getContainer()
+    protected static function getContainer(): ContainerInterface
     {
         return static::$kernel->getContainer();
     }

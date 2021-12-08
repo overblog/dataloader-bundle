@@ -1,0 +1,5 @@
+overblog_graphql_endpoint:
+    resource: "@OverblogDataLoaderBundle/Resources/config/routing/graphql.yaml"
+
+overblog_graphql_graphiql:
+    resource: "@OverblogDataLoaderBundle/Resources/config/routing/graphiql.yaml"

@@ -2,6 +2,7 @@ framework:
     test: ~
     secret: test
     router:
+        utf8: true
         resource: "%kernel.project_dir%/config/routing.yaml"
     profiler:
         enabled: false

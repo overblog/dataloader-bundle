@@ -17,6 +17,10 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+use function array_replace;
+use function preg_match;
+use function sprintf;
+
 final class OverblogDataLoaderExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void

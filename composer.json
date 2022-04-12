@@ -25,7 +25,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "overblog/dataloader-php": "^0.7.0",
         "symfony/dependency-injection": "^5.3.7 || ^6.0"
     },

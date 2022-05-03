@@ -25,7 +25,7 @@ final class OverblogDataLoaderExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
 
         $configuration = $this->getConfiguration($configs, $container);
@@ -48,8 +48,7 @@ final class OverblogDataLoaderExtension extends Extension
                     $batchLoadFn,
                     new Reference($loaderConfig['promise_adapter']),
                     new Reference($OptionServiceID),
-                ])
-            ;
+                ]);
 
             if (isset($loaderConfig['factory'])) {
                 $definition->setFactory($this->buildCallableFromScalar($loaderConfig['factory']));
@@ -69,7 +68,7 @@ final class OverblogDataLoaderExtension extends Extension
 
     private function generateDataLoaderServiceIDFromName($name, ContainerBuilder $container): string
     {
-        return sprintf('%s.%s_loader', $this->getAlias(), $container->underscore($name));
+        return sprintf('%s.%s_loader', $this->getAlias(), $container::underscore($name));
     }
 
     private function generateDataLoaderOptionServiceIDFromName($name, ContainerBuilder $container): string
@@ -102,16 +101,16 @@ final class OverblogDataLoaderExtension extends Extension
             $function = new Reference($matches['service_id']);
             if (empty($matches['method'])) {
                 return $function;
-            } else {
-                return [$function, $matches['method']];
             }
+
+            return [$function, $matches['method']];
         } elseif (preg_match(Configuration::PHP_CALLABLE_NOTATION_REGEX, $scalar, $matches)) {
             $function = $matches['function'];
             if (empty($matches['method'])) {
                 return $function;
-            } else {
-                return [$function, $matches['method']];
             }
+
+            return [$function, $matches['method']];
         }
 
         return null;

@@ -11,6 +11,9 @@
 
 namespace Overblog\DataLoaderBundle\DependencyInjection;
 
+use Overblog\DataLoader\DataLoader;
+use Overblog\DataLoader\Option;
+use Overblog\PromiseAdapter\PromiseAdapterInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -31,17 +34,19 @@ final class OverblogDataLoaderExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setAlias(PromiseAdapterInterface::class, $config['defaults']['promise_adapter']);
+
         foreach ($config['loaders'] as $name => $loaderConfig) {
             $loaderConfig = array_replace($config['defaults'], $loaderConfig);
             $dataLoaderServiceID = $this->generateDataLoaderServiceIDFromName($name, $container);
             $OptionServiceID = $this->generateDataLoaderOptionServiceIDFromName($name, $container);
             $batchLoadFn = $this->buildCallableFromScalar($loaderConfig['batch_load_fn']);
 
-            $container->register($OptionServiceID, 'Overblog\\DataLoader\\Option')
+            $container->register($OptionServiceID, Option::class)
                 ->setPublic(false)
                 ->setArguments([$this->buildOptionsParams($loaderConfig['options'])]);
 
-            $definition = $container->register($dataLoaderServiceID, 'Overblog\\DataLoader\\DataLoader')
+            $definition = $container->register($dataLoaderServiceID, DataLoader::class)
                 ->setPublic(true)
                 ->addTag('kernel.reset', ['method' => 'clearAll'])
                 ->setArguments([

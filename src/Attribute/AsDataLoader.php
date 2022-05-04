@@ -12,6 +12,8 @@ final class AsDataLoader
         public readonly ?int $maxBatchSize = null,
         public readonly ?bool $batch = null,
         public readonly ?bool $cache = null,
+        public readonly ?string $cacheMap = null,
+        public readonly ?string $cacheKeyFn = null,
     ) {
     }
 }

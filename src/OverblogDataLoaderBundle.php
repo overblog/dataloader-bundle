@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Overblog\DataLoaderBundle;
 
 use LogicException;
@@ -47,6 +49,13 @@ final class OverblogDataLoaderBundle extends Bundle
                     array $config,
                     string $batchLoadFn
                 ): array {
+                    if (isset($config['cacheMap'])) {
+                        $config['cacheMap'] = new Reference($config['cacheMap']);
+                    }
+                    if (isset($config['cacheKeyFn'])) {
+                        $config['cacheKeyFn'] = new Reference($config['cacheKeyFn']);
+                    }
+
                     $id = $this->generateDataLoaderServiceIDFromName($name, $container);
                     $OptionServiceID = $this->generateDataLoaderOptionServiceIDFromName($name, $container);
                     $container->register($OptionServiceID, Option::class)
@@ -96,7 +105,7 @@ final class OverblogDataLoaderBundle extends Bundle
                             $container,
                             $name,
                             $attributeArgs,
-                            new Reference($id)
+                            $id
                         );
                         $container->registerAliasForArgument($serviceId, DataLoaderInterface::class, $name);
                     }

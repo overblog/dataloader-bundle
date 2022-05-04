@@ -87,7 +87,7 @@ final class OverblogDataLoaderBundle extends Bundle
 
                 public function process(ContainerBuilder $container)
                 {
-                    foreach ($container->findTaggedServiceIds('overblog_dataloader.dataloader.fn') as $id => $tags) {
+                    foreach ($container->findTaggedServiceIds('overblog.dataloader.fn') as $id => $tags) {
                         $serviceDefinition = $container->getDefinition($id);
                         $class = $serviceDefinition->getClass();
 

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Overblog\DataLoaderBundle;
 
-use LogicException;
 use Overblog\DataLoader\DataLoader;
 use Overblog\DataLoader\DataLoaderInterface;
 use Overblog\DataLoader\Option;
@@ -26,6 +25,7 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use function lcfirst;
 use function sprintf;
 
 final class OverblogDataLoaderBundle extends Bundle
@@ -91,16 +91,20 @@ final class OverblogDataLoaderBundle extends Bundle
                         $serviceDefinition = $container->getDefinition($id);
                         $class = $serviceDefinition->getClass();
 
-                        $attribute = (new ReflectionClass($class))->getAttributes(AsDataLoader::class);
-                        if (!$attribute) {
-                            throw new LogicException(
-                                'In order to use ' . DataLoaderFnInterface::class . ' you must define ' . AsDataLoader::class . ' attribute on your class'
-                            );
-                        }
-                        $attributeArgs = $attribute[0]->getArguments();
-                        $name = $attributeArgs['alias'];
+                        $reflection = new ReflectionClass($class);
+                        $attribute = $reflection->getAttributes(AsDataLoader::class);
 
-                        unset($attributeArgs['alias']);
+                        if (count($attribute) !== 0) {
+                            $attributeArgs = $attribute[0]->getArguments();
+                            $name = $attributeArgs['alias'];
+
+                            unset($attributeArgs['alias']);
+                        } else {
+                            $attributeArgs = [];
+
+                            $name = lcfirst($reflection->getShortName());
+                        }
+
                         [, $serviceId] = $this->registerDataLoader(
                             $container,
                             $name,

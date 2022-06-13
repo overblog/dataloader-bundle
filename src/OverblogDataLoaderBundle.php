@@ -62,7 +62,7 @@ final class OverblogDataLoaderBundle extends Bundle
                     ContainerBuilder $container,
                     array $rawConfig,
                     string $batchLoadFn
-                ): array {
+                ): void {
                     $name = $rawConfig['alias'];
                     $dataLoaderRef = new Reference($batchLoadFn);
                     $config = [];
@@ -83,17 +83,15 @@ final class OverblogDataLoaderBundle extends Bundle
                         ->setPublic(false)
                         ->setArguments([$config]);
 
-                    return [
-                        $container->register($id, DataLoader::class)
-                            ->setPublic(true)
-                            ->addTag('kernel.reset', ['method' => 'clearAll'])
-                            ->setArguments([
-                                $dataLoaderRef,
-                                new Reference('overblog_dataloader.webonyx_graphql_sync_promise_adapter'),
-                                new Reference($OptionServiceID),
-                            ]),
-                        $id,
-                    ];
+                    $container->register($id, DataLoader::class)
+                        ->setPublic(true)
+                        ->addTag('kernel.reset', ['method' => 'clearAll'])
+                        ->setArguments([
+                            $dataLoaderRef,
+                            new Reference('overblog_dataloader.webonyx_graphql_sync_promise_adapter'),
+                            new Reference($OptionServiceID),
+                        ]);
+                    $container->registerAliasForArgument($id, DataLoaderInterface::class, $name);
                 }
 
                 private function generateDataLoaderOptionServiceIDFromName($name, ContainerBuilder $container): string
@@ -110,12 +108,11 @@ final class OverblogDataLoaderBundle extends Bundle
                 {
                     foreach ($container->findTaggedServiceIds('overblog.dataloader') as $id => $tags) {
                         foreach ($tags as $attrs) {
-                            [, $serviceId] = $this->registerDataLoader(
+                            $this->registerDataLoader(
                                 $container,
                                 $attrs,
                                 $id
                             );
-                            $container->registerAliasForArgument($serviceId, DataLoaderInterface::class, $name);
                         }
                     }
                 }

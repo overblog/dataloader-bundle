@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Overblog\DataLoaderBundle;
 
+use LogicException;
 use Overblog\DataLoader\DataLoader;
 use Overblog\DataLoader\DataLoaderInterface;
 use Overblog\DataLoader\Option;
 use Overblog\DataLoaderBundle\Attribute\AsDataLoader;
 use Overblog\DataLoaderBundle\DependencyInjection\OverblogDataLoaderExtension;
-use ReflectionClass;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -37,23 +38,40 @@ final class OverblogDataLoaderBundle extends Bundle
 
     public function build(ContainerBuilder $container)
     {
-        $container->registerForAutoconfiguration(DataLoaderFnInterface::class)
-            ->addTag('overblog.dataloader.fn');
+        $container->registerAttributeForAutoconfiguration(
+            AsDataLoader::class,
+            static function (ChildDefinition $definition, AsDataLoader $attribute, \ReflectionClass $reflector): void {
+                if (!$reflector->implementsInterface(DataLoaderFnInterface::class)) {
+                    throw new LogicException(sprintf('Please implement %s', DataLoaderFnInterface::class));
+                }
+
+                $definition->addTag('overblog.dataloader', [
+                        'alias' => $attribute->alias ?? lcfirst($reflector->getShortName()),
+                        'maxBatchSize' => $attribute->maxBatchSize,
+                        'batch' => $attribute->batch,
+                        'cache' => $attribute->cache,
+                        'cacheMap' => $attribute->cacheMap,
+                        'cacheKeyFn' => $attribute->cacheKeyFn,
+                    ]
+                );
+            }
+        );
 
         $container->addCompilerPass(
             new class implements CompilerPassInterface {
-
                 private function registerDataLoader(
                     ContainerBuilder $container,
                     string $name,
                     array $config,
                     string $batchLoadFn
                 ): array {
+                    $dataLoaderRef = new Reference($batchLoadFn);
+
                     if (isset($config['cacheMap'])) {
-                        $config['cacheMap'] = new Reference($config['cacheMap']);
+                        $config['cacheMap'] = [$dataLoaderRef, $config['cacheMap']];
                     }
                     if (isset($config['cacheKeyFn'])) {
-                        $config['cacheKeyFn'] = new Reference($config['cacheKeyFn']);
+                        $config['cacheKeyFn'] = [$dataLoaderRef, $config['cacheKeyFn']];
                     }
 
                     $id = $this->generateDataLoaderServiceIDFromName($name, $container);
@@ -67,7 +85,7 @@ final class OverblogDataLoaderBundle extends Bundle
                             ->setPublic(true)
                             ->addTag('kernel.reset', ['method' => 'clearAll'])
                             ->setArguments([
-                                new Reference($batchLoadFn),
+                                $dataLoaderRef,
                                 new Reference('overblog_dataloader.webonyx_graphql_sync_promise_adapter'),
                                 new Reference($OptionServiceID),
                             ]),
@@ -87,31 +105,19 @@ final class OverblogDataLoaderBundle extends Bundle
 
                 public function process(ContainerBuilder $container)
                 {
-                    foreach ($container->findTaggedServiceIds('overblog.dataloader.fn') as $id => $tags) {
-                        $serviceDefinition = $container->getDefinition($id);
-                        $class = $serviceDefinition->getClass();
+                    foreach ($container->findTaggedServiceIds('overblog.dataloader') as $id => $tags) {
+                        foreach ($tags as $attrs) {
+                            $name = $attrs['alias'];
+                            unset($attrs['alias']);
 
-                        $reflection = new ReflectionClass($class);
-                        $attribute = $reflection->getAttributes(AsDataLoader::class);
-
-                        if (count($attribute) !== 0) {
-                            $attributeArgs = $attribute[0]->getArguments();
-                            $name = $attributeArgs['alias'];
-
-                            unset($attributeArgs['alias']);
-                        } else {
-                            $attributeArgs = [];
-
-                            $name = lcfirst($reflection->getShortName());
+                            [, $serviceId] = $this->registerDataLoader(
+                                $container,
+                                $name,
+                                $attrs,
+                                $id
+                            );
+                            $container->registerAliasForArgument($serviceId, DataLoaderInterface::class, $name);
                         }
-
-                        [, $serviceId] = $this->registerDataLoader(
-                            $container,
-                            $name,
-                            $attributeArgs,
-                            $id
-                        );
-                        $container->registerAliasForArgument($serviceId, DataLoaderInterface::class, $name);
                     }
                 }
             }

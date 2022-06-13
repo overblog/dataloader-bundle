@@ -8,7 +8,7 @@ namespace Overblog\DataLoaderBundle\Attribute;
 final class AsDataLoader
 {
     public function __construct(
-        public readonly string $alias,
+        public readonly ?string $alias = null,
         public readonly ?int $maxBatchSize = null,
         public readonly ?bool $batch = null,
         public readonly ?bool $cache = null,

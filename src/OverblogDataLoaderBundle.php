@@ -50,7 +50,6 @@ final class OverblogDataLoaderBundle extends Bundle
                         'maxBatchSize' => $attribute->maxBatchSize,
                         'batch' => $attribute->batch,
                         'cache' => $attribute->cache,
-                        'cacheMap' => $attribute->cacheMap,
                         'cacheKeyFn' => $attribute->cacheKeyFn,
                     ]
                 );
@@ -61,17 +60,21 @@ final class OverblogDataLoaderBundle extends Bundle
             new class implements CompilerPassInterface {
                 private function registerDataLoader(
                     ContainerBuilder $container,
-                    string $name,
-                    array $config,
+                    array $rawConfig,
                     string $batchLoadFn
                 ): array {
+                    $name = $rawConfig['alias'];
                     $dataLoaderRef = new Reference($batchLoadFn);
+                    $config = [];
 
-                    if (isset($config['cacheMap'])) {
-                        $config['cacheMap'] = [$dataLoaderRef, $config['cacheMap']];
+                    foreach (['batch', 'maxBatchSize', 'cache'] as $key) {
+                        if (isset($rawConfig[$key])) {
+                            $config[$key] = $rawConfig[$key];
+                        }
                     }
-                    if (isset($config['cacheKeyFn'])) {
-                        $config['cacheKeyFn'] = [$dataLoaderRef, $config['cacheKeyFn']];
+
+                    if (isset($rawConfig['cacheKeyFn'])) {
+                        $config['cacheKeyFn'] = [$dataLoaderRef, $rawConfig['cacheKeyFn']];
                     }
 
                     $id = $this->generateDataLoaderServiceIDFromName($name, $container);
@@ -107,12 +110,8 @@ final class OverblogDataLoaderBundle extends Bundle
                 {
                     foreach ($container->findTaggedServiceIds('overblog.dataloader') as $id => $tags) {
                         foreach ($tags as $attrs) {
-                            $name = $attrs['alias'];
-                            unset($attrs['alias']);
-
                             [, $serviceId] = $this->registerDataLoader(
                                 $container,
-                                $name,
                                 $attrs,
                                 $id
                             );

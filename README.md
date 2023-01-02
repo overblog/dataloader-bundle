@@ -1,7 +1,7 @@
 # DataLoaderBundle
 
 This bundle allows to easy use  [DataLoaderPHP](https://github.com/overblog/dataloader-php)
-in your Symfony 2 / 3 project by  configuring it through configuration.
+in your Symfony project by  configuring it through configuration.
 
 [![Build Status](https://travis-ci.org/overblog/dataloader-bundle.svg?branch=master)](https://travis-ci.org/overblog/dataloader-bundle)
 [![Coverage Status](https://coveralls.io/repos/github/overblog/dataloader-bundle/badge.svg?branch=master)](https://coveralls.io/github/overblog/dataloader-bundle?branch=master)

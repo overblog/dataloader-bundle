@@ -13,6 +13,7 @@ namespace Overblog\DataLoaderBundle\Tests\Functional;
 
 use Overblog\DataLoader\DataLoader;
 use Overblog\DataLoaderBundle\Tests\Functional\app\UserDataProvider;
+
 use function React\Promise\all;
 
 class UserLoaderTest extends TestCase

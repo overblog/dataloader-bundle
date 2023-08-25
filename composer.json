@@ -32,7 +32,6 @@
     "require-dev": {
         "phpunit/phpunit": "^9.5.10",
         "react/promise": "^2.8.0",
-        "sensio/framework-extra-bundle": "^6.3",
         "symfony/phpunit-bridge": "^6.3",
         "symfony/yaml": "^5.4 || ^6.3"
     },

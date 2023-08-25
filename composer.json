@@ -42,7 +42,7 @@
         }
     },
   "scripts": {
-      "test": "bin/phpunit --color=always --coverage-clover=build/logs/clover.xml",
+      "test": "bin/phpunit --color=always",
       "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.23.0/php-cs-fixer.phar -O php-cs-fixer.phar",
       "fix-cs": [
           "@install-cs",

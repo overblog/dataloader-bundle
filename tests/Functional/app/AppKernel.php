@@ -21,9 +21,6 @@ class AppKernel extends Kernel
 {
     private $testCase;
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerBundles(): array
     {
         return [
@@ -52,9 +49,6 @@ class AppKernel extends Kernel
         return $this->booted;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config.yaml');

@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         bootstrap="vendor/autoload.php"
-        >
-    <testsuites>
-        <testsuite name="OverblogDataLoaderBundle Test Suite">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
-
-    <php>
-        <ini name="error_reporting" value="-1"/>
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="999999" />
-    </php>
-
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" colors="true" processIsolation="false" stopOnFailure="false" bootstrap="vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <testsuites>
+    <testsuite name="OverblogDataLoaderBundle Test Suite">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="999999"/>
+  </php>
 </phpunit>

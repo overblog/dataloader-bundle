@@ -6,6 +6,7 @@ framework:
         resource: "%kernel.project_dir%/config/routing.yaml"
     profiler:
         enabled: false
+    http_method_override: false
 
 overblog_dataloader:
     defaults:

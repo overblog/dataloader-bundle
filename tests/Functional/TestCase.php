@@ -29,9 +29,6 @@ abstract class TestCase extends WebTestCase
         return AppKernel::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected static function createKernel(array $options = []): KernelInterface
     {
         if (null === static::$class) {
@@ -46,9 +43,6 @@ abstract class TestCase extends WebTestCase
         return new static::$class($env, $debug, $options['test_case']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function setUpBeforeClass(): void
     {
         $fs = new Filesystem();

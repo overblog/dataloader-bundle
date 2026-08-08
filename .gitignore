@@ -9,3 +9,4 @@ composer.phar
 /.phpunit.result.cache
 /.phpunit.cache
 /.php-cs-fixer.cache
+.idea/

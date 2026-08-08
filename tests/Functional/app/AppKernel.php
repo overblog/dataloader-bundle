@@ -19,8 +19,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class AppKernel extends Kernel
 {
-    private $testCase;
-
     public function registerBundles(): array
     {
         return [
@@ -39,17 +37,17 @@ class AppKernel extends Kernel
         return sys_get_temp_dir().'/OverblogDataLoaderBundle/'.Kernel::VERSION.'/logs';
     }
 
-    public function getRootDir()
+    public function getProjectDir(): string
     {
         return __DIR__;
     }
 
-    public function isBooted()
+    public function isBooted(): bool
     {
         return $this->booted;
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(__DIR__.'/config/config.yaml');
     }

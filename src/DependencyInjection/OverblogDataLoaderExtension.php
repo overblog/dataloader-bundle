@@ -31,7 +31,7 @@ final class OverblogDataLoaderExtension extends Extension
 
         $container->registerAttributeForAutoconfiguration(AsDataLoader::class, function (ChildDefinition $definition, AsDataLoader $attribute, \ReflectionClass|\ReflectionMethod $reflector) use ($config) {
             if ($reflector instanceof \ReflectionMethod && null !== $attribute->method) {
-                throw new \LogicException(sprintf('Parameter "method" for attribute "%s" must be NULL when applied on a method.', AsDataLoader::class));
+                throw new \LogicException(\sprintf('Parameter "method" for attribute "%s" must be NULL when applied on a method.', AsDataLoader::class));
             }
 
             $definition->addTag('overblog.dataloader', array_merge($config['defaults'], [

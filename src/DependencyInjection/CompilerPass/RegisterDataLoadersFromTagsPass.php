@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterDataLoadersFromTagsPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         foreach ($container->findTaggedServiceIds('overblog.dataloader') as $serviceId => $tags) {
             foreach ($tags as $attributes) {

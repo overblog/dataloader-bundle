@@ -116,7 +116,7 @@ final class Configuration implements ConfigurationInterface
      * @param string|null $name
      * @param string      $type
      *
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     * @return ArrayNodeDefinition|NodeDefinition
      */
     public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, $name, $type = 'array')
     {
